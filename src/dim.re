@@ -1,0 +1,1 @@
+module type DimType = {let dim: int;};
