@@ -1,14 +1,39 @@
-/*module type Dim = {let dim: int;};*/
 module Make (F: Field.FieldType) => {
   type k = F.t;
-  type t = array F.t;
-  let make (a: array F.t) :t => a;
-  let zero n => Array.make n F.zero;
-  let const n (x: F.t) => Array.make n x;
-  let add (v: t) (w: t) :t => v |> Array.mapi (fun i x => F.add x w.(i));
-  let neg (v: t) :t => v |> Array.map F.neg;
+  type t = list F.t;
+  type entry = {
+    index: int,
+    value: F.t
+  };
+  /* Do not expose */
+  let rec find f (ell: list 'a) :option entry =>
+    switch ell {
+    | [] => None
+    | [x, ...y] =>
+      f x == true ?
+        Some {index: 0, value: x} :
+        (
+          switch (find f y) {
+          | None => None
+          | Some {index, value} => Some {index: index + 1, value}
+          }
+        )
+    };
+  let make (a: list F.t) :t => a;
+  let fromString s :t =>
+    s
+    |> Js.String.trim
+    |> Js.String.split " "
+    |> Array.to_list
+    |> List.map Js.String.trim
+    |> List.map F.fromString;
+  let const n (x: F.t) :t => Array.make n x |> Array.to_list;
+  let zero n => const n F.zero;
+  let leadingEntry (row: t) :option entry => find (fun x => x != F.zero) row;
+  let add (v: t) (w: t) :t => List.map2 (fun x y => F.add x y) v w;
+  let neg (v: t) :t => v |> List.map F.neg;
   let sub (v: t) (w: t) :t => add v (neg w);
-  let smul (x: F.t) (v: t) :t => v |> Array.map (F.mul x);
-  let toString (v: t) :string => Array.to_list (Array.map F.toTex v) |> String.concat "   ";
+  let smul (x: F.t) (v: t) :t => v |> List.map (F.mul x);
+  let toString (v: t) :string => List.map F.toTex v |> String.concat "   ";
   let toTex (v: t) :string => v |> toString;
 };

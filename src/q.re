@@ -52,7 +52,7 @@ let sub p q => add p (neg q);
 
 let mul ((a, b): t) ((c, d): t) :t => reduce (a * c, b * d);
 
-let inv ((a, b): t) :t => (b, a);
+let inv ((a, b): t) :t => reduce (b, a);
 
 let div p q => mul p (inv q);
 
