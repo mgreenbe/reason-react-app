@@ -4,7 +4,14 @@ let valueOfTarget event => (event |> ReactEventRe.Form.target |> ReactDOMRe.domE
 
 module MQ = MSpace.Make Q;
 
+module StringMap = Map.Make String;
+
+let m = StringMap.empty;
+
+let mm = StringMap.add "key" "value";
+
 type action =
+  | Change string string
   | Matrix string
   | Row1 string
   | Row2 string
@@ -15,6 +22,7 @@ type action =
   | Next;
 
 type state = {
+  inputs: StringMap.t string,
   matrix: string,
   matrix_actual: MQ.t,
   row1: string,
@@ -36,6 +44,11 @@ let make _children => {
   ...component,
   initialState: fun () => (
     {
+      inputs:
+        StringMap.empty
+        |> StringMap.add "row1" ""
+        |> StringMap.add "row2" ""
+        |> StringMap.add "scalar" "",
       matrix: initialMatrixString,
       matrix_actual: MQ.fromString initialMatrixString, /* |> MQ.rowEchelonForm */
       row1: "",
@@ -45,6 +58,8 @@ let make _children => {
   ),
   reducer: fun (action: action) state =>
     switch action {
+    | Change name value =>
+      ReasonReact.Update {...state, inputs: StringMap.add name value state.inputs}
     | Matrix value =>
       ReasonReact.Update {...state, matrix: value, matrix_actual: MQ.fromString value}
     | Row1 value => ReasonReact.Update {...state, row1: value}
@@ -88,45 +103,26 @@ let make _children => {
           scalar: Q.toString x
         }
       }
-    /* let x = switch (MQ.nextRowOp self.matrix_actual) {
-       | _ => ReasonReact.NoUpdate
-       }*/
     },
-  render: fun self =>
+  render: fun self => {
+    let handleRow1Change = self.reduce (fun event => Row1 (valueOfTarget event));
+    let handleRow2Change = self.reduce (fun event => Row2 (valueOfTarget event));
+    let handleScalarChange = self.reduce (fun event => Scalar (valueOfTarget event));
+    let handleMatrixChange = self.reduce (fun event => Matrix (valueOfTarget event));
+    let {matrix, row1, row2, scalar} = self.state;
     <div>
-      (se "Matrix: ")
-      <br />
-      <textarea
-        placeholder="..."
-        value=self.state.matrix
-        onChange=(self.reduce (fun event => Matrix (valueOfTarget event)))
-      />
-      <br />
-      <br />
       <Tex source=(MQ.toTex self.state.matrix_actual) />
       <br />
       <br />
-      (se "Row 1: ")
-      <input
-        placeholder="..."
-        value=self.state.row1
-        onChange=(self.reduce (fun event => Row1 (valueOfTarget event)))
-      />
-      <br />
-      <br />
-      (se "Row 2: ")
-      <input
-        placeholder="..."
-        value=self.state.row2
-        onChange=(self.reduce (fun event => Row2 (valueOfTarget event)))
-      />
-      <br />
-      <br />
-      (se "Scalar: ")
-      <input
-        placeholder="..."
-        value=self.state.scalar
-        onChange=(self.reduce (fun event => Scalar (valueOfTarget event)))
+      <Inputs
+        matrix
+        row1
+        row2
+        scalar
+        handleMatrixChange
+        handleRow1Change
+        handleRow2Change
+        handleScalarChange
       />
       <br />
       <br />
@@ -135,4 +131,5 @@ let make _children => {
       <button onClick=(self.reduce (fun _ => Transvect))> (se "Transvect") </button>
       <button onClick=(self.reduce (fun _ => Next))> (se "Next Row Op") </button>
     </div>
+  }
 };
