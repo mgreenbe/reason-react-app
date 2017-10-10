@@ -1,24 +1,69 @@
-.App {
-  text-align: center;
+select {
+  padding: 0.25em;
+}
+.matrix-input-bar {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
+.matrix-input-label {
+  padding-bottom: 0.5em;
 }
 
-.App-header {
-  background-color: #222;
-  height: 150px;
-  padding: 20px;
-  color: white;
+.matrix-preview-label {
+  padding-bottom: 0.5em;
 }
 
-.App-intro {
-  font-size: large;
+.working-matrix-label {
+  padding-bottom: 0.5em;
 }
 
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.input {
+  transition: all 500ms;
+}
+
+.scalar-input {
+  width: 6em;
+}
+
+.input-highlight {
+  background-color: palevioletred;
+}
+
+.input-bar {
+  display: flex;
+  justify-content: space-around;
+}
+
+.button {
+  padding: 0.5em;
+  transition: all 500ms;
+}
+
+.button-highlight {
+  background-color: palevioletred;
+}
+
+.button-bar {
+  display: flex;
+  flex-direction: column;
+}
+
+.working-matrix-bar {
+  display: flex;
+  justify-content: space-around;
+}
+
+.ef-bar-badge {
+  margin-left: 1em;
+  margin-right: 1em;
+}
+
+.not-in-ref {
+  text-decoration: line-through;
+}
+
+.not-in-rref {
+  text-decoration: line-through;
 }

@@ -20,13 +20,14 @@ module Make (F: Field.FieldType) => {
         )
     };
   let make (a: list F.t) :t => a;
-  let fromString s :t =>
+  let fromString s =>
     s
     |> Js.String.trim
     |> Js.String.split " "
     |> Array.to_list
-    |> List.map Js.String.trim
-    |> List.map F.fromString;
+    |> List.map (fun x => x |> Js.String.trim |> F.fromString);
+  /*  let fromString s => fromStringFlexible F.fromString s;
+      let fromStringStrict s => fromStringFlexible F.fromStringStrict s; */
   let const n (x: F.t) :t => Array.make n x |> Array.to_list;
   let zero n => const n F.zero;
   let leadingEntry (row: t) :option entry => find (fun x => x != F.zero) row;

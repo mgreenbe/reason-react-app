@@ -28,5 +28,5 @@ let make ::source _children => {
           }
       )
     },
-  render: fun self => <div ref=(self.handle setRef) />
+  render: fun self => <span ref=(self.handle setRef) />
 };

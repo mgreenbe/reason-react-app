@@ -23,7 +23,34 @@ type t = (int, int);
 
 let make (a: int) (b: int) :t => reduce (a, b);
 
+exception ParseError string;
+
+exception YouScrewedUp string;
+
+type kind =
+  | ZERO
+  | INF
+  | MINF
+  | UNDEF
+  | NZERO;
+
+let classify =
+  fun
+  | ((0, 0): t) => UNDEF
+  | (x, 0) when x > 0 => INF
+  | (x, 0) when x < 0 => MINF
+  | (0, _) => ZERO
+  | _ => NZERO;
+
+let isFinite x =>
+  switch (classify x) {
+  | ZERO
+  | NZERO => true
+  | _ => false
+  };
+
 let fromString (s: string) :t =>
+  /* accept "0/0" for otherwise arithmetic with infinities doesn't work */
   [%re {|/^(-?\d+)(?:\/(\d+))?$/|}]
   |> Js.Re.exec s
   |> (
@@ -35,9 +62,26 @@ let fromString (s: string) :t =>
         | Some d => make (int_of_string b) (int_of_string d)
         | _ => make (int_of_string b) 1
         }
-      | _ => make 0 0
+      | _ => /*raise (YouScrewedUp "Reached a case that should not have happened!")*/ make 0 0
       }
-    | None => make 0 0
+    | None => /*raise (ParseError "Couldn't parse!")*/ make 0 0
+  );
+
+let fromStringStrict s =>
+  [%re {|/^(-?\d+)(?:\/([0-9]\d*))?$/|}]
+  |> Js.Re.exec s
+  |> (
+    fun
+    | Some result =>
+      switch (Js.Re.matches result) {
+      | [|_, b, c|] =>
+        switch (Js_null_undefined.return c |> Js_null_undefined.to_opt) {
+        | Some d => Some (make (int_of_string b) (int_of_string d))
+        | _ => Some (make (int_of_string b) 1)
+        }
+      | _ => /*raise (YouScrewedUp "Reached a case that should not have happened!")*/ None
+      }
+    | None => /*raise (ParseError "Couldn't parse as a rational number!")*/ None
   );
 
 let zero = make 0 1;

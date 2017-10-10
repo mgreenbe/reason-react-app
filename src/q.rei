@@ -1,9 +1,18 @@
 type t;
 
+type kind;
+
 let make: int => int => t;
+
+let classify: t => kind;
+
+let isFinite: t => bool;
 
 let fromString: string => t;
 
+let fromStringStrict: string => option t;
+
+/* let fromStringOpt: string => option t; */
 let zero: t;
 
 let one: t;

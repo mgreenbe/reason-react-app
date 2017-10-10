@@ -20,6 +20,8 @@ module Make (F: Field.FieldType) => {
   let make a :t => a |> List.map V.make;
   let fromString s =>
     s |> Js.String.trim |> Js.String.split "\n" |> Array.to_list |> List.map V.fromString |> make;
+  /*  let fromString s => fromStringFlexible F.fromString;
+      let fromStringStrict s => fromStringFlexible F.fromStringStrict;*/
   let const m n x => V.const n x |> Array.make m |> Array.to_list;
   let zero m n => const m n F.zero;
   let row (a: t) (i: int) :V.t => List.nth a i;

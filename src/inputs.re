@@ -3,11 +3,9 @@ let se = ReasonReact.stringToElement;
 let component = ReasonReact.statelessComponent "Inputs";
 
 let make
-    ::matrix
-    ::row1
-    ::row2
-    ::scalar
-    ::handleMatrixChange
+    ::row1Input
+    ::row2Input
+    ::scalarInput
     ::handleRow1Change
     ::handleRow2Change
     ::handleScalarChange
@@ -15,19 +13,15 @@ let make
   ...component,
   render: fun _self =>
     <div>
-      (se "Matrix: ")
-      <textarea placeholder="..." value=matrix onChange=handleMatrixChange />
-      <br />
-      <br />
       (se "Row 1: ")
-      <input placeholder="..." value=row1 onChange=handleRow1Change />
+      <input value=row1Input onChange=handleRow1Change />
       <br />
       <br />
       (se "Row 2: ")
-      <input placeholder="..." value=row2 onChange=handleRow2Change />
+      <input value=row2Input onChange=handleRow2Change />
       <br />
       <br />
       (se "Scalar: ")
-      <input placeholder="..." value=scalar onChange=handleScalarChange />
+      <input value=scalarInput onChange=handleScalarChange />
     </div>
 };
