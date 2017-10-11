@@ -7,8 +7,6 @@ let int_of_string_opt s =>
 
 module MQ = MSpace.Make Q;
 
-type kind = Q.kind;
-
 type action =
   | UpdateValue string;
 
