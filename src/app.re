@@ -4,7 +4,4 @@
 
 let component = ReasonReact.statelessComponent "App";
 
-let make _children => {
-  ...component,
-  render: fun _self => <div> /*<Tex source /> <br /> */ <Echo /> </div>
-};
+let make _children => {...component, render: fun _self => <EchelonFormWidget />};
